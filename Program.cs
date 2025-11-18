@@ -60,17 +60,17 @@ namespace Atividade_CSharp
 
                             Console.Clear();
                             string sqlInsert = "INSERT INTO paciente (Nome, Cpf, Sus, Idade, Endereco, Telefone, Email, Contador) VALUES (@nome, @cpf, @sus, @idade, @endereco, @telefone, @email, @contador)";
-                            MySqlCommand cmd = new MySqlCommand(sqlInsert, conexao);
-                            cmd.Parameters.AddWithValue("@nome", paciente.Nome);
-                            cmd.Parameters.AddWithValue("@cpf", paciente.Cpf);
-                            cmd.Parameters.AddWithValue("@sus", paciente.Sus);
-                            cmd.Parameters.AddWithValue("@idade", paciente.Idade);
-                            cmd.Parameters.AddWithValue("@endereco", paciente.Endereco);
-                            cmd.Parameters.AddWithValue("@telefone", paciente.Telefone);
-                            cmd.Parameters.AddWithValue("@email", paciente.Email);
-                            cmd.Parameters.AddWithValue("@contador", contador);
+                            MySqlCommand cmdCa = new MySqlCommand(sqlInsert, conexao);
+                            cmdCa.Parameters.AddWithValue("@nome", paciente.Nome);
+                            cmdCa.Parameters.AddWithValue("@cpf", paciente.Cpf);
+                            cmdCa.Parameters.AddWithValue("@sus", paciente.Sus);
+                            cmdCa.Parameters.AddWithValue("@idade", paciente.Idade);
+                            cmdCa.Parameters.AddWithValue("@endereco", paciente.Endereco);
+                            cmdCa.Parameters.AddWithValue("@telefone", paciente.Telefone);
+                            cmdCa.Parameters.AddWithValue("@email", paciente.Email);
+                            cmdCa.Parameters.AddWithValue("@contador", contador);
 
-                            int linhas = cmd.ExecuteNonQuery();
+                            int linhas = cmdCa.ExecuteNonQuery();
                             Console.WriteLine("Paciente Cadastrado!! \n\nPressione ENTER para continuar...");
                             Console.ReadLine();
                             Console.Clear();
@@ -145,8 +145,8 @@ namespace Atividade_CSharp
                         {
 
                             string sqlSelect = "SELECT Id, Nome, Idade FROM paciente ORDER BY Idade DESC";
-                            MySqlCommand cmd = new MySqlCommand(sqlSelect, conexao);
-                            MySqlDataReader reader = cmd.ExecuteReader();
+                            MySqlCommand cmdAt = new MySqlCommand(sqlSelect, conexao);
+                            MySqlDataReader reader = cmdAt.ExecuteReader();
                             
                             while (reader.Read())
                             {
@@ -176,19 +176,67 @@ namespace Atividade_CSharp
                         break;
 
                     case "4":
+
                         Console.Clear();
                         if (contador == 0)
                         {
                             Console.WriteLine("Não existe nenhum paciente cadastrado no sistema. Voltando ao Menu. \n\n\n");
                         }
+
+                            Console.WriteLine("Digite o CPF do paciente que voce deseja alterar os dados: ");
+                            string cpfDigt = Console.ReadLine();
+
+                            string sql = "SELECT COUNT(*) FROM paciente WHERE Cpf = @cpf";
+
+                            MySqlCommand cmd = new MySqlCommand(sql, conexao);
+                            
+                                cmd.Parameters.AddWithValue("@cpf", cpfDigt);
+
+                                int qtd = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        if (qtd > 0)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Digite seu nome novamente: \n");
+                            string novoNome = Console.ReadLine();
+                            Console.Clear();
+                            Console.WriteLine("Digite seu cartao do sus novamente: \n");
+                            string novoSus = Console.ReadLine();
+                            Console.Clear();
+                            Console.WriteLine("Digite sua idade novamente: \n");
+                            string novaIdade = Console.ReadLine();
+                            Console.Clear();
+                            Console.WriteLine("Digite seu endereco novamente: \n");
+                            string novoEndereco = Console.ReadLine();
+                            Console.Clear();
+                            Console.WriteLine("Digite seu telefone novamente: \n");
+                            string novoTel = Console.ReadLine();
+                            Console.Clear();
+                            Console.WriteLine("Digite seu email novamente: \n");
+                            string novoEmail = Console.ReadLine();
+                            Console.Clear();
+                            Console.WriteLine("Todas suas informações foram alteradas.\n\nPressione ENTER para continuar...");
+                            Console.ReadLine();
+                            Console.Clear();
+
+                            string sqlupd = "UPDATE paciente SET nome=@Nome, sus=@Sus, idade=@Idade, endereco=@Endereco, telefone=@Telefone, email=@Email WHERE cpf = @cpf";
+
+                            MySqlCommand cmdUpd = new MySqlCommand(sqlupd, conexao);
+
+                            cmdUpd.Parameters.AddWithValue("@Nome", novoNome);
+                            cmdUpd.Parameters.AddWithValue("@cpf", cpfDigt);
+                            cmdUpd.Parameters.AddWithValue("@Sus", novoSus);
+                            cmdUpd.Parameters.AddWithValue("@Idade", novaIdade);
+                            cmdUpd.Parameters.AddWithValue("@Endereco", novoEndereco);
+                            cmdUpd.Parameters.AddWithValue("@Telefone", novoTel);
+                            cmdUpd.Parameters.AddWithValue("@Email", novoEmail);
+                            cmdUpd.ExecuteNonQuery();
+
+                        }
                         else
                         {
-                            Console.WriteLine("Digite o CPF do paciente que deseja alterar dados cadastrais:");
-                            string cpfBusca = Console.ReadLine();
-                            for (int y = 0; y < contador; y++)
-                            {
-                                array[y].Consultar(cpfBusca);
-                            }
+                            Console.WriteLine("CPF NAO CADASTRADO!!");
+                            Console.Clear();
                         }
                         break;
 
